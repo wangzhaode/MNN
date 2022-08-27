@@ -33,3 +33,5 @@ jobs:
             mkdir build && cd build
             cmake -DMNN_BUILD_TEST=ON ..
             cmake --build . -j4
+      - name: test
+        run: cd build && ./run_test.out.exe
