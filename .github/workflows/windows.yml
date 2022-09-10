@@ -28,8 +28,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-      - name: test
+      - name: build
         run: |
             mkdir build && cd build
-            cmake -DMNN_BUILD_TEST=ON ..
-            cmake --build . -j4
+            cmake -G Ninja -DMNN_SEP_BUILD=OFF -DMNN_WIN_RUNTIME_MT=OFF -DMNN_BUILD_TEST=ON ..
+            ninja
+      - name: test
+        run: cd build && ./run_test.out.exe
