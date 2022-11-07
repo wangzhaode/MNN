@@ -136,9 +136,9 @@ def configure_extension_build():
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "tools", "train")]
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "tools", "cv")]
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "source", "backend", "tensorrt")]
-    WIN_LIB_SUFFIX = '.lib'
+    WIN_LIB_SUFFIX_A = False
     if IS_WINDOWS and os.path.exists(os.path.join(engine_library_dirs[0], 'libMNN.a')):
-        WIN_LIB_SUFFIX = '.a'
+        WIN_LIB_SUFFIX_A = True
     if USE_TRT:
         # Note: TensorRT-5.1.5.0/lib should be set in $LIBRARY_PATH of the build system.
         engine_library_dirs += ['/usr/local/cuda/lib64/']
@@ -265,7 +265,10 @@ def configure_extension_build():
         engine_link_args += ['-fopenmp']
         engine_link_args += ['-Wl,--no-whole-archive']
     if IS_WINDOWS:
-        engine_link_args += ['/WHOLEARCHIVE:MNN' + WIN_LIB_SUFFIX]
+        if WIN_LIB_SUFFIX_A:
+          engine_link_args += ['/WHOLEARCHIVE:libMNN.a']
+        else:
+          engine_link_args += ['/WHOLEARCHIVE:MNN.lib']
     if IS_DARWIN:
         tools_link_args += ['-Wl,-all_load']
         tools_link_args += tools_depend
@@ -277,9 +280,14 @@ def configure_extension_build():
         tools_link_args += ['-Wl,--no-whole-archive']
         tools_link_args += ['-lz']
     if IS_WINDOWS:
-        tools_link_args += ['/WHOLEARCHIVE:MNN' + WIN_LIB_SUFFIX]
-        tools_link_args += ['/WHOLEARCHIVE:MNNConvertDeps' + WIN_LIB_SUFFIX]
-        tools_link_args += ['libprotobuf' + WIN_LIB_SUFFIX] # use wholearchive will cause lnk1241 (version.rc specified)
+        if WIN_LIB_SUFFIX_A:
+          tools_link_args += ['/WHOLEARCHIVE:libMNN.a']
+          tools_link_args += ['/WHOLEARCHIVE:libMNNConvertDeps.a']
+          tools_link_args += ['libprotobuf.a']
+        else:
+          tools_link_args += ['/WHOLEARCHIVE:MNN.lib']
+          tools_link_args += ['/WHOLEARCHIVE:MNNConvertDeps.lib']
+          tools_link_args += ['libprotobuf.lib'] # use wholearchive will cause lnk1241 (version.rc specified)
 
     if BUILD_TYPE == 'DEBUG':
         # Need pythonxx_d.lib, which seem not exist in miniconda ?
