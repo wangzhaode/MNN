@@ -33,6 +33,7 @@ IS_LINUX = (platform.system() == 'Linux')
 BUILD_DIR = 'pymnn_build'
 BUILD_TYPE = 'REL_WITH_DEB_INFO'
 BUILD_ARCH = 'x64'
+WIN_LIB_SUFFIX = '.lib'
 if args.x86:
     BUILD_ARCH = ''
 
@@ -136,6 +137,8 @@ def configure_extension_build():
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "tools", "train")]
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "tools", "cv")]
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "source", "backend", "tensorrt")]
+		if IS_WINDOWS and os.path.exists(os.path.join(engine_library_dirs[0], 'libMNN.a')):
+        WIN_LIB_SUFFIX = '.a'
     if USE_TRT:
         # Note: TensorRT-5.1.5.0/lib should be set in $LIBRARY_PATH of the build system.
         engine_library_dirs += ['/usr/local/cuda/lib64/']
@@ -262,7 +265,7 @@ def configure_extension_build():
         engine_link_args += ['-fopenmp']
         engine_link_args += ['-Wl,--no-whole-archive']
     if IS_WINDOWS:
-        engine_link_args += ['/WHOLEARCHIVE:MNN.lib']
+        engine_link_args += ['/WHOLEARCHIVE:MNN' + WIN_LIB_SUFFIX]
     if IS_DARWIN:
         tools_link_args += ['-Wl,-all_load']
         tools_link_args += tools_depend
@@ -274,9 +277,9 @@ def configure_extension_build():
         tools_link_args += ['-Wl,--no-whole-archive']
         tools_link_args += ['-lz']
     if IS_WINDOWS:
-        tools_link_args += ['/WHOLEARCHIVE:MNN.lib']
-        tools_link_args += ['/WHOLEARCHIVE:MNNConvertDeps.lib']
-        tools_link_args += ['libprotobuf.lib'] # use wholearchive will cause lnk1241 (version.rc specified)
+        tools_link_args += ['/WHOLEARCHIVE:MNN' + WIN_LIB_SUFFIX]
+        tools_link_args += ['/WHOLEARCHIVE:MNNConvertDeps' + WIN_LIB_SUFFIX]
+        tools_link_args += ['libprotobuf' + WIN_LIB_SUFFIX] # use wholearchive will cause lnk1241 (version.rc specified)
 
     if BUILD_TYPE == 'DEBUG':
         # Need pythonxx_d.lib, which seem not exist in miniconda ?
