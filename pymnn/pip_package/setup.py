@@ -33,7 +33,6 @@ IS_LINUX = (platform.system() == 'Linux')
 BUILD_DIR = 'pymnn_build'
 BUILD_TYPE = 'REL_WITH_DEB_INFO'
 BUILD_ARCH = 'x64'
-WIN_LIB_SUFFIX = '.lib'
 if args.x86:
     BUILD_ARCH = ''
 
@@ -137,7 +136,8 @@ def configure_extension_build():
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "tools", "train")]
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "tools", "cv")]
     engine_library_dirs += [os.path.join(root_dir, BUILD_DIR, "source", "backend", "tensorrt")]
-		if IS_WINDOWS and os.path.exists(os.path.join(engine_library_dirs[0], 'libMNN.a')):
+    WIN_LIB_SUFFIX = '.lib'
+    if IS_WINDOWS and os.path.exists(os.path.join(engine_library_dirs[0], 'MNN.a')):
         WIN_LIB_SUFFIX = '.a'
     if USE_TRT:
         # Note: TensorRT-5.1.5.0/lib should be set in $LIBRARY_PATH of the build system.

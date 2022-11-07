@@ -1,12 +1,5 @@
 name: pymnn-windows
 on:
-  push:
-    branches:
-     - master
-     - 'feature/**'
-    paths:
-      - 'pymnn/**'
-      - '.github/workflows/pymnn_windows.yml'
   pull_request:
     branches: [master]
     paths:
