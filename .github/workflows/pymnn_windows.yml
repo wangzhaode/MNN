@@ -24,6 +24,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: ilammy/msvc-dev-cmd@v1 
       - name: prepare
         run: |
             pip3 install numpy opencv-python torch
