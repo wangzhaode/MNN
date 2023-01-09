@@ -30,7 +30,24 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - name: build_ios
+        with:
+          submodules: true
+
+      - uses: mxcl/xcodebuild@v1
+        with:
+          platform: iOS
+          action: build
+          configuration: release
+          working-directory: project/ios
+          scheme: MNN
+
+      - name: show
         run: |
-            cd project/ios
-            ./buildiOS.sh
+            echo '--------------------'
+            ls project/ios/build.xcresult
+            zip -9 -y -r res.zip project/ios/build.xcresult
+
+      - name: upload-zip
+        uses: actions/upload-artifact@v3
+        with:
+          path: res.zip
