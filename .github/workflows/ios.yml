@@ -31,6 +31,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: build_ios
+        uses: sersoft-gmbh/xcodebuild-action@v2
+        with:
+          project: project/ios/MNN.xcodeproj
+          scheme: MNN
+          destination: platform=iOS
+          action: build
+
+      - name: show file after
         run: |
-            cd project/ios
-            ./buildiOS.sh
+          ls -lh .
+          ls -lh ./project/ios
+          ls -lh ./project/ios/MNN.xcodeproj
