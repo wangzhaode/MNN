@@ -15,6 +15,10 @@ while getopts "o:c:h" opt; do
   esac
 done
 
+find $ANDROID_NDK -name libc++_shared.so
+
+exit
+
 rm -rf $path && mkdir -p $path
 PACKAGE_PATH=$(realpath $path)
 pushd $PACKAGE_PATH && mkdir -p arm64-v8a && popd
