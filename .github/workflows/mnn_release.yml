@@ -1,5 +1,5 @@
-name: release
-on: [push]
+name: mnn_release
+on: push
 jobs:
   setup:
     permissions:
@@ -16,7 +16,7 @@ jobs:
     needs: [setup]
     runs-on: ubuntu-latest
     env:
-      PACKAGENAME: demo-${{ needs.setup.outputs.VERSION }}-full-source
+      PACKAGENAME: mnn_${{ needs.setup.outputs.VERSION }}_source_code
     steps:
     - uses: actions/checkout@v3
       with:
@@ -33,29 +33,22 @@ jobs:
         name: ${{ env.PACKAGENAME }}
         path: /tmp/${{ env.PACKAGENAME }}.zip
 
-  ubuntu-release:
-    needs: [setup]
+  upload_release:
+    permissions:
+      contents: none
+    name: Upload
+    needs: [full-source]
     runs-on: ubuntu-latest
-    env:
-      PACKAGENAME: demo-${{ needs.setup.outputs.VERSION }}-ubuntu-1804
-    steps:
-    - uses: actions/checkout@v3
+
+    - uses: actions/download-artifact@v3
       with:
-        submodules: true
-    - name: build
-      run: |
-        mkdir build && cd build
-        cmake ..
-        make -j4
-    - name: package
-      run: |
-        rm -rf ${{ env.PACKAGENAME }}
-        mkdir -p ${{ env.PACKAGENAME }}
-        cp -a build/*.a ${{ env.PACKAGENAME }}
-        rm -f ${{ env.PACKAGENAME }}.zip
-        zip -9 -y -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
-    - name: upload-zip
-      uses: actions/upload-artifact@v3
+        name: artifact
+        path: assert
+
+    - uses: xresloader/upload-to-github-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: ${{ env.PACKAGENAME }}
-        path: ${{ env.PACKAGENAME }}.zip
+        file: assert/*.zip
+        tags: true
+        draft: true
