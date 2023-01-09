@@ -30,7 +30,13 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - name: build_ios
-        run: |
-            cd project/ios
-            ./buildiOS.sh
+        with:
+          submodules: true
+
+      - uses: mxcl/xcodebuild@v1
+        with:
+          platform: iOS
+          action: build
+          configuration: release
+          working-directory: project/ios
+          scheme: MNN
