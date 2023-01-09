@@ -1,0 +1,75 @@
+name: mnn_release
+on: push
+jobs:
+  setup:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.get_version.outputs.VERSION }}
+    steps:
+    - name: get-version
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+
+  full-source:
+    needs: [setup]
+    runs-on: ubuntu-latest
+    env:
+      PACKAGENAME: mnn_${{ needs.setup.outputs.VERSION }}_source_code
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: package
+      run: |
+        ls
+        rm -rf .git
+        rm -f /tmp/${{ env.PACKAGENAME }}.zip
+        zip -9 -y -r /tmp/${{ env.PACKAGENAME }}.zip .
+    - name: upload-zip
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: /tmp/${{ env.PACKAGENAME }}.zip
+
+  publish_wheels:
+    permissions:
+      contents: none
+    name: Upload
+    needs: [full-source]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: artifact
+        path: assert
+
+    - name: Show files
+      run: ls assert
+
+  upload_release:
+    permissions:
+      contents: none
+    name: Upload
+    needs: [full-source]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: artifact
+        path: assert
+
+    - uses: xresloader/upload-to-github-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        file: assert/*.zip
+        tags: true
+        draft: true
