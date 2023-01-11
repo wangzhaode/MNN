@@ -34,7 +34,10 @@ jobs:
           submodules: true
 
       - name: build-framework
-        run: ./package_scripts/ios/xcodebuildiOS.sh -o ios_build
+        run: |
+          brew install coreutils
+          ./package_scripts/ios/xcodebuildiOS.sh -o ios_build
+        shell: bash
 
       - name: show-framework
         run: |
