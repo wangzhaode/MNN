@@ -29,4 +29,6 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
 
     - name: build
-      run: powershell .\package_scripts\win\build_lib_release.ps1 -path test
+      run: |
+          mkdir tmp
+          powershell .\package_scripts\win\build_lib_release.ps1 -path tmp
