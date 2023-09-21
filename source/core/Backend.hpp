@@ -116,7 +116,9 @@ public:
      * @brief callback after resize ops.
      */
     virtual ErrorCode onResizeEnd() {
-        // nothing to do
+        #ifdef NO_ERROR
+        #undef NO_ERROR
+        #endif
         return NO_ERROR;
     }
 

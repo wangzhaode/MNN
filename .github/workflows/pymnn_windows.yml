@@ -40,3 +40,4 @@ jobs:
         run: |
             cd pymnn/test
             python3 unit_test.py
+            echo "TEST END"

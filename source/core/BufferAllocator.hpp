@@ -98,7 +98,12 @@ public:
     virtual void beginGroup() {}
     virtual void endGroup() {}
     virtual void reset() {}
-    virtual ErrorCode compute() { return NO_ERROR; }
+    virtual ErrorCode compute() {
+        #ifdef NO_ERROR
+        #undef NO_ERROR
+        #endif
+        return NO_ERROR;
+    }
 };
 
 
