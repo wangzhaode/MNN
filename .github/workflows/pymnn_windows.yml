@@ -33,7 +33,7 @@ jobs:
             pip3 install numpy opencv-python torch
       - name: build
         run: |
-            echo 'xxx'
+            echo 'xxx###xxx'
             cd pymnn/pip_package
             python3 build_deps.py
             python3 setup.py install --version 1.0
