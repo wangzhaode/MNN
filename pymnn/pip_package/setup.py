@@ -357,7 +357,7 @@ def configure_extension_build():
         if IS_DARWIN:
             # dylibs instal at .../lib/ for
             # .../lib/python*/site-packages/_mnncengine.cpython-*-darwin.so
-            return ['-Wl,-rpath,@loader_path/../../../' + path]
+            return [f'-Wl,-rpath,@loader_path/../../../{path},-rpath,@loader_path/{path}']
         elif IS_WINDOWS:
             return []
         else:
