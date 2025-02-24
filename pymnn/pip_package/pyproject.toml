@@ -48,7 +48,7 @@ archs = ["native"]
 repair-wheel-command = [
     "export LD_LIBRARY_PATH=$(pwd)/pymnn_build/tools/converter/libtorch/lib:$LD_LIBRARY_PATH",
     "echo $LD_LIBRARY_PATH",
-    "auditwheel repair --plat manylinux2014_x86_64 -w {dest_dir} {wheel}"
+    "auditwheel repair --plat manylinux2014_${CIBW_ARCHS_LINUX} -w {dest_dir} {wheel}"
 ]
 
 [tool.cibuildwheel.windows]
